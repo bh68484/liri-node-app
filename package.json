@@ -1,0 +1,29 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "Command Line Node App",
+  "main": "keys.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bh68484/liri-node-app.git"
+  },
+  "keywords": [
+    "Node",
+    "App"
+  ],
+  "author": "Brandon A. Harrington",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bh68484/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/bh68484/liri-node-app#readme",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "node-spotify-api": "^1.0.7",
+    "request": "^2.85.0",
+    "twitter": "^1.7.1"
+  }
+}
