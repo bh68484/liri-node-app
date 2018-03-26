@@ -1,8 +1,48 @@
+// Loading Modules
 require("dotenv").config();
+var applicationKeys = require("./keys.js");
 var request = require("request");
+var twitter = require("twitter");
 
-// This will decide which function will be ran.
+// decide which function will be ran.
 var action = process.argv[2];
+var input = process.argv[3];
+
+function spotify() {
+  var Spotify = require("node-spotify-api");
+
+  var spotify = new Spotify(applicationKeys.spotify);
+
+  spotify.search({ type: "track", query: "all the small things" }, function(
+    err,
+    data
+  ) {
+    if (err) {
+      return console.log("Error occurred: " + err);
+    }
+
+    console.log(data);
+  });
+}
+
+//Twitter
+var client = new twitter(applicationKeys.twitter);
+
+function myTweets() {
+  var params = { screen_name: "trophy_ghost" };
+  client.get("statuses/user_timeline", params, function(
+    error,
+    tweets,
+    response
+  ) {
+    if (!error) {
+      console.log("Last 20 tweets");
+      for (var i = 0; i < tweets.length; i++) {
+        console.log(tweets[i].text);
+      }
+    }
+  });
+}
 
 // We will then create a switch-case statement (if-then would also work).
 // The switch-case will direct which function gets run.
@@ -24,22 +64,22 @@ switch (action) {
     break;
 }
 
+//Movie this Function
 function movieThis() {
   // Store all of the arguments in an array
   var nodeArgs = process.argv;
-  var movieName = process.argv[3];
 
   // Loop through all the words in the node argument
   // And do a little for-loop magic to handle the inclusion of "+"s
   for (var i = 4; i < nodeArgs.length; i++) {
     if (i > 3 && i < nodeArgs.length) {
-      movieName = movieName + "+" + nodeArgs[i];
+      input = input + "+" + nodeArgs[i];
     } else {
-      movieName += nodeArgs[i];
+      input += nodeArgs[i];
     }
   }
   // Then run a request to the OMDB API with the movie specified
-  var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&apikey=trilogy";
+  var queryUrl = "http://www.omdbapi.com/?t=" + input + "&apikey=trilogy";
 
   // This line is just to help us debug against the actual URL.
   // console.log(queryUrl);
@@ -60,18 +100,5 @@ function movieThis() {
       console.log("Plot: " + JSON.parse(body).Plot);
       console.log("Actors: " + JSON.parse(body).Actors);
     }
-  });
-}
-function spotify() {
-  spotify.search({ type: "track", query: "dancing in the moonlight" }, function(
-    err,
-    data
-  ) {
-    if (err) {
-      console.log("Error occurred: " + err);
-      return;
-    }
-
-    console.log(data);
   });
 }

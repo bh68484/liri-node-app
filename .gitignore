@@ -57,5 +57,6 @@ typings/
 # misc
 .DS_store
 .env
+keys.js
 
 
