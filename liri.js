@@ -3,33 +3,74 @@ require("dotenv").config();
 var applicationKeys = require("./keys.js");
 var request = require("request");
 var twitter = require("twitter");
-
-// decide which function will be ran.
+var Spotify = require("node-spotify-api");
+//Decides which function will be ran.
 var action = process.argv[2];
-var input = process.argv[3];
+//Used to query either a song or movie title depending on which function is ran.
+var query = process.argv[3];
 
+// We will then create a switch-case statement (if-then would also work).
+// The switch-case will direct which function gets run.
+switch (action) {
+  case "my-tweets":
+    myTweets();
+    break;
+
+  case "spotify-this-song":
+    spotify(action);
+    break;
+
+  case "movie-this":
+    movieThis();
+    break;
+
+  case "do-what-it-says":
+    doWhatItSays();
+    break;
+}
+//Spotify-this Function
 function spotify() {
-  var Spotify = require("node-spotify-api");
-
   var spotify = new Spotify(applicationKeys.spotify);
+  // Store all of the arguments in an array
+  var input = process.argv[3];
+  // var nodeArgs = process.argv[3];
 
-  spotify.search({ type: "track", query: "all the small things" }, function(
+  // Loop through all the words in the node argument
+  // And do a little for-loop magic to handle the inclusion of "+"s
+  for (var i = 4; i < input.length; i++) {
+    if (i > 3 && i < input.length) {
+      var songSearch = input + input[i];
+    } else {
+      songSearch += input[i];
+    }
+  }
+  spotify.search({ type: "track", query: input, limit: 3 }, function(
     err,
     data
   ) {
     if (err) {
       return console.log("Error occurred: " + err);
     }
+    console.log(songSearch);
+    var bandName = data.tracks.items[0].artists[0].name;
+    var songName = data.tracks.items[0].name;
+    var previewUrl = data.tracks.items[0].preview_url;
+    var albumName = data.tracks.items[0].album.name;
 
-    console.log(data);
+    console.log("Artist Name: " + bandName);
+    console.log("Track Title: " + songName);
+    console.log("Album Title: " + albumName);
+    console.log("Preview URL: " + previewUrl);
   });
 }
 
-//Twitter
-var client = new twitter(applicationKeys.twitter);
-
+//My-tweets Function
 function myTweets() {
-  var params = { screen_name: "trophy_ghost" };
+  var client = new twitter(applicationKeys.twitter);
+  var params = {
+    screen_name: "trophy_ghost",
+    count: 20
+  };
   client.get("statuses/user_timeline", params, function(
     error,
     tweets,
@@ -44,27 +85,7 @@ function myTweets() {
   });
 }
 
-// We will then create a switch-case statement (if-then would also work).
-// The switch-case will direct which function gets run.
-switch (action) {
-  case "my-tweets":
-    myTweets();
-    break;
-
-  case "spotify-this-song":
-    spotify();
-    break;
-
-  case "movie-this":
-    movieThis();
-    break;
-
-  case "do-what-it-says":
-    doWhatItSays();
-    break;
-}
-
-//Movie this Function
+//Movie-this Function
 function movieThis() {
   // Store all of the arguments in an array
   var nodeArgs = process.argv;
@@ -79,7 +100,7 @@ function movieThis() {
     }
   }
   // Then run a request to the OMDB API with the movie specified
-  var queryUrl = "http://www.omdbapi.com/?t=" + input + "&apikey=trilogy";
+  var queryUrl = "http://www.omdbapi.com/?t=" + query + "&apikey=trilogy";
 
   // This line is just to help us debug against the actual URL.
   // console.log(queryUrl);
