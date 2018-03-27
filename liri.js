@@ -4,6 +4,8 @@ var applicationKeys = require("./keys.js");
 var request = require("request");
 var twitter = require("twitter");
 var Spotify = require("node-spotify-api");
+var fs = require("fs");
+
 //Decides which function will be ran.
 var action = process.argv[2];
 //Used to query either a song or movie title depending on which function is ran.
@@ -21,13 +23,14 @@ switch (action) {
     break;
 
   case "movie-this":
-    movieThis();
+    movieThis(action);
     break;
 
   case "do-what-it-says":
-    doWhatItSays();
+    doWhatItSays(action);
     break;
 }
+
 //Spotify-this Function
 function spotify() {
   var spotify = new Spotify(applicationKeys.spotify);
@@ -38,13 +41,13 @@ function spotify() {
   // Loop through all the words in the node argument
   // And do a little for-loop magic to handle the inclusion of "+"s
   for (var i = 4; i < input.length; i++) {
-    if (i > 3 && i < input.length) {
+    if (i > 4 && i < input.length) {
       var songSearch = input + input[i];
     } else {
       songSearch += input[i];
     }
   }
-  spotify.search({ type: "track", query: input, limit: 3 }, function(
+  spotify.search({ type: "track", query: input, limit: 20 }, function(
     err,
     data
   ) {
@@ -87,6 +90,9 @@ function myTweets() {
 
 //Movie-this Function
 function movieThis() {
+  if (query === undefined) {
+    query = "Mr. Nobody";
+  }
   // Store all of the arguments in an array
   var nodeArgs = process.argv;
 
@@ -121,5 +127,16 @@ function movieThis() {
       console.log("Plot: " + JSON.parse(body).Plot);
       console.log("Actors: " + JSON.parse(body).Actors);
     }
+  });
+
+  // function doThing() {
+  //   fs.readFile("random.txt", "utf8", function(error, data) {});
+  // }
+}
+
+function doWhatItSays() {
+  fs.readFile("random.txt", "utf8", function(err, data) {
+    if (err) throw err;
+    console.log(data);
   });
 }
