@@ -31,46 +31,6 @@ switch (action) {
     doWhatItSays(action);
     break;
 }
-
-//Spotify-this Function
-function spotify() {
-  var spotify = new Spotify(applicationKeys.spotify);
-  // Store all of the arguments in an array
-  var input = process.argv[3];
-  if (input === undefined) {
-    input = "The Sign Ace of Base";
-  }
-
-  // // Loop through all the words in the node argument
-  // // And do a little for-loop magic to handle the inclusion of "+"s
-  // for (var i = 4; i < input.length; i++) {
-  //   if (i > 4 && i < input.length) {
-  //     var songSearch = input + input[i];
-  //   } else {
-  //     songSearch += input[i];
-  //   }
-  // }
-
-  spotify.search({ type: "track", query: input, limit: 20 }, function(
-    err,
-    data
-  ) {
-    if (err) {
-      return console.log("Error occurred: " + err);
-    }
-    console.log(input);
-    var bandName = data.tracks.items[0].artists[0].name;
-    var songName = data.tracks.items[0].name;
-    var previewUrl = data.tracks.items[0].preview_url;
-    var albumName = data.tracks.items[0].album.name;
-
-    console.log("Artist Name: " + bandName);
-    console.log("Track Title: " + songName);
-    console.log("Album Title: " + albumName);
-    console.log("Preview URL: " + previewUrl);
-  });
-}
-
 //My-tweets Function
 function myTweets() {
   var client = new twitter(applicationKeys.twitter);
@@ -87,8 +47,41 @@ function myTweets() {
       console.log("----------Last 20 tweets----------");
       for (var i = 0; i < tweets.length; i++) {
         console.log(tweets[i].text + "\r\n");
+        fs.appendFileSync("log.txt", "\r\n" + "\r\n" + tweets[i].text + "\r\n");
+        err => {
+          if (err) throw err;
+          console.log('The "data to append" was appended to file!');
+        };
       }
     }
+  });
+}
+
+//Spotify-this Function
+function spotify() {
+  var spotify = new Spotify(applicationKeys.spotify);
+  var input = process.argv[3];
+  if (input === undefined) {
+    input = "The Sign Ace of Base";
+  }
+  params = input;
+  spotify.search({ type: "track", query: params, limit: 20 }, function(
+    err,
+    data
+  ) {
+    if (err) {
+      return console.log("Error occurred: " + err);
+    }
+    console.log(params);
+    var bandName = data.tracks.items[0].artists[0].name;
+    var songName = data.tracks.items[0].name;
+    var previewUrl = data.tracks.items[0].preview_url;
+    var albumName = data.tracks.items[0].album.name;
+
+    console.log("Artist Name: " + bandName);
+    console.log("Track Title: " + songName);
+    console.log("Album Title: " + albumName);
+    console.log("Preview URL: " + previewUrl);
   });
 }
 
@@ -112,9 +105,6 @@ function movieThis() {
   // Then run a request to the OMDB API with the movie specified
   var queryUrl = "http://www.omdbapi.com/?t=" + query + "&apikey=trilogy";
 
-  // This line is just to help us debug against the actual URL.
-  // console.log(queryUrl);
-
   request(queryUrl, function(error, response, body) {
     // If the request is successful
     if (!error && response.statusCode === 200) {
@@ -130,16 +120,52 @@ function movieThis() {
       console.log("Language: " + JSON.parse(body).Language);
       console.log("Plot: " + JSON.parse(body).Plot);
       console.log("Actors: " + JSON.parse(body).Actors);
+      fs.appendFile(
+        "log.txt",
+        "\r\n" +
+          "----------Movie Details----------" +
+          "\r\n" +
+          "Title: " +
+          JSON.parse(body).Title +
+          "\r\n" +
+          "Release Year: " +
+          JSON.parse(body).Year +
+          "\r\n" +
+          "IMDB Rating: " +
+          JSON.parse(body).Ratings[0].Value +
+          "\r\n" +
+          "Rotten Tomatoes Rating: " +
+          JSON.parse(body).Ratings[1].Value +
+          "\r\n" +
+          "Release Country: " +
+          JSON.parse(body).Country +
+          "\r\n" +
+          "Language: " +
+          JSON.parse(body).Language +
+          "\r\n" +
+          "Plot: " +
+          JSON.parse(body).Plot +
+          "\r\n" +
+          "Actors: " +
+          JSON.parse(body).Actors +
+          "\r\n",
+
+        err => {
+          if (err) throw err;
+          console.log('The "data to append" was appended to file!');
+        }
+      );
     }
   });
 }
 
 function doWhatItSays() {
   fs.readFile("random.txt", "utf8", function(error, data) {
-    cmdString = data.split(",");
-    var input = cmdString[1].trim();
-    console.log(input);
+    if (!error) {
+      results = data.split(",");
+      spotify((process.argv[3] = results[1]));
+    } else {
+      console.log("Error occurred" + error);
+    }
   });
 }
-
-//wrap switch action in a function
