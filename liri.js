@@ -5,15 +5,15 @@ var request = require("request");
 var twitter = require("twitter");
 var Spotify = require("node-spotify-api");
 var fs = require("fs");
+var moment = require("moment");
 
 //Decides which function will be ran.
 var action = process.argv[2];
 //Used to query either a song or movie title depending on which function is ran.
 var query = process.argv[3];
 
-// We will then create a switch-case statement (if-then would also work).
-// The switch-case will direct which function gets run.
-
+//Switch-case statement
+//The switch-case will direct which function gets run.
 switch (action) {
   case "my-tweets":
     myTweets();
@@ -45,9 +45,36 @@ function myTweets() {
   ) {
     if (!error) {
       console.log("----------Last 20 tweets----------");
+      fs.appendFileSync(
+        "log.txt",
+        "\r\n" + "----------Last 20 Tweets----------"
+      );
+      err => {
+        if (err) throw err;
+        console.log('The "data to append" was appended to file!');
+      };
       for (var i = 0; i < tweets.length; i++) {
-        console.log(tweets[i].text + "\r\n");
-        fs.appendFileSync("log.txt", "\r\n" + "\r\n" + tweets[i].text + "\r\n");
+        var tweetTime = moment(
+          tweets[i].created_at,
+          "'ddd MMM DD HH:mm:ss Z YYYY'"
+        );
+        console.log(
+          "Don @trophy_ghost - " +
+            tweets[i].text +
+            " " +
+            tweetTime.format("llll") +
+            "\r\n"
+        );
+        fs.appendFileSync(
+          "log.txt",
+          "\r\n" +
+            "\r\n" +
+            "Don @trophy_ghost - " +
+            tweets[i].text +
+            " " +
+            tweetTime.format("llll") +
+            "\r\n"
+        );
         err => {
           if (err) throw err;
           console.log('The "data to append" was appended to file!');
@@ -85,6 +112,8 @@ function spotify() {
     fs.appendFileSync(
       "log.txt",
       "\r\n" +
+        "----------Spotify Results----------" +
+        "\r\n" +
         "Artist Name: " +
         bandName +
         "\r\n" +
