@@ -82,6 +82,26 @@ function spotify() {
     console.log("Track Title: " + songName);
     console.log("Album Title: " + albumName);
     console.log("Preview URL: " + previewUrl);
+    fs.appendFileSync(
+      "log.txt",
+      "\r\n" +
+        "Artist Name: " +
+        bandName +
+        "\r\n" +
+        "Track Title: " +
+        songName +
+        "\r\n" +
+        "Album Title: " +
+        albumName +
+        "\r\n" +
+        "Preview URL: " +
+        previewUrl +
+        "\r\n"
+    );
+    err => {
+      if (err) throw err;
+      console.log('The "data to append" was appended to file!');
+    };
   });
 }
 
