@@ -13,6 +13,7 @@ var query = process.argv[3];
 
 // We will then create a switch-case statement (if-then would also work).
 // The switch-case will direct which function gets run.
+
 switch (action) {
   case "my-tweets":
     myTweets();
@@ -36,17 +37,20 @@ function spotify() {
   var spotify = new Spotify(applicationKeys.spotify);
   // Store all of the arguments in an array
   var input = process.argv[3];
-  // var nodeArgs = process.argv[3];
-
-  // Loop through all the words in the node argument
-  // And do a little for-loop magic to handle the inclusion of "+"s
-  for (var i = 4; i < input.length; i++) {
-    if (i > 4 && i < input.length) {
-      var songSearch = input + input[i];
-    } else {
-      songSearch += input[i];
-    }
+  if (input === undefined) {
+    input = "The Sign Ace of Base";
   }
+
+  // // Loop through all the words in the node argument
+  // // And do a little for-loop magic to handle the inclusion of "+"s
+  // for (var i = 4; i < input.length; i++) {
+  //   if (i > 4 && i < input.length) {
+  //     var songSearch = input + input[i];
+  //   } else {
+  //     songSearch += input[i];
+  //   }
+  // }
+
   spotify.search({ type: "track", query: input, limit: 20 }, function(
     err,
     data
@@ -54,7 +58,7 @@ function spotify() {
     if (err) {
       return console.log("Error occurred: " + err);
     }
-    console.log(songSearch);
+    console.log(input);
     var bandName = data.tracks.items[0].artists[0].name;
     var songName = data.tracks.items[0].name;
     var previewUrl = data.tracks.items[0].preview_url;
@@ -80,9 +84,9 @@ function myTweets() {
     response
   ) {
     if (!error) {
-      console.log("Last 20 tweets");
+      console.log("----------Last 20 tweets----------");
       for (var i = 0; i < tweets.length; i++) {
-        console.log(tweets[i].text);
+        console.log(tweets[i].text + "\r\n");
       }
     }
   });
@@ -128,15 +132,14 @@ function movieThis() {
       console.log("Actors: " + JSON.parse(body).Actors);
     }
   });
-
-  // function doThing() {
-  //   fs.readFile("random.txt", "utf8", function(error, data) {});
-  // }
 }
 
 function doWhatItSays() {
-  fs.readFile("random.txt", "utf8", function(err, data) {
-    if (err) throw err;
-    console.log(data);
+  fs.readFile("random.txt", "utf8", function(error, data) {
+    cmdString = data.split(",");
+    var input = cmdString[1].trim();
+    console.log(input);
   });
 }
+
+//wrap switch action in a function
