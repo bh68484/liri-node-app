@@ -234,14 +234,14 @@ function help() {
       "\r\n"
   );
   console.log(
-    "spotify-this-song '<song name>' - Displays song information about that specific song from Spotify and saves it to log.txt.  If no song is chosen, the program will default to the song The Sign by Ace of Base." +
+    "spotify-this-song '<song name>' - Displays song information about that specific song from Spotify and saves it to log.txt.  If no song is chosen, the program will default to the song 'The Sign' by Ace of Base." +
       "\r\n"
   );
   console.log(
-    "movie-this '<movie-title>' - Displays movie information about the specific movie from the Open Movie Database and saves it to log.txt." +
+    "movie-this '<movie-title>' - Displays movie information about the specific movie from the Open Movie Database and saves it to log.txt.  If no movie is selected, the program will default to the movie Mr. Nobody, display the results, and save the information to log.txt." +
       "\r\n"
   );
   console.log(
-    "do-what-it-says Reads file random.txt and will run the spotify command function automatically and displays the information.  The information will be saved to log.txt "
+    "do-what-it-says - Reads file random.txt and will run the spotify command function automatically and displays the information.  The information will be saved to log.txt "
   );
 }
