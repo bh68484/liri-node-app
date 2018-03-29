@@ -11,7 +11,10 @@ var moment = require("moment");
 var action = process.argv[2];
 //Used to query either a song or movie title depending on which function is ran.
 var query = process.argv[3];
-
+console.log(
+  "*****Please type node liri 'help' for instructions on how to use*****" +
+    "\r\n"
+);
 //Switch-case statement
 //The switch-case will direct which function gets run.
 switch (action) {
@@ -30,7 +33,11 @@ switch (action) {
   case "do-what-it-says":
     doWhatItSays(action);
     break;
+  case "help":
+    help(action);
+    break;
 }
+
 //My-tweets Function
 function myTweets() {
   var client = new twitter(applicationKeys.twitter);
@@ -65,6 +72,7 @@ function myTweets() {
             tweetTime.format("llll") +
             "\r\n"
         );
+
         fs.appendFileSync(
           "log.txt",
           "\r\n" +
@@ -99,7 +107,6 @@ function spotify() {
     if (err) {
       return console.log("Error occurred: " + err);
     }
-    console.log(params);
     var bandName = data.tracks.items[0].artists[0].name;
     var songName = data.tracks.items[0].name;
     var previewUrl = data.tracks.items[0].preview_url;
@@ -108,7 +115,7 @@ function spotify() {
     console.log("Artist Name: " + bandName);
     console.log("Track Title: " + songName);
     console.log("Album Title: " + albumName);
-    console.log("Preview URL: " + previewUrl);
+    console.log("Preview URL: " + previewUrl + "\r\n");
     fs.appendFileSync(
       "log.txt",
       "\r\n" +
@@ -168,7 +175,7 @@ function movieThis() {
       console.log("Release Country: " + JSON.parse(body).Country);
       console.log("Language: " + JSON.parse(body).Language);
       console.log("Plot: " + JSON.parse(body).Plot);
-      console.log("Actors: " + JSON.parse(body).Actors);
+      console.log("Actors: " + JSON.parse(body).Actors + "\r\n");
       fs.appendFile(
         "log.txt",
         "\r\n" +
@@ -201,7 +208,7 @@ function movieThis() {
 
         err => {
           if (err) throw err;
-          console.log('The "data to append" was appended to file!');
+          console.log('The "data to append" was appended to log.txt!');
         }
       );
     }
@@ -217,4 +224,24 @@ function doWhatItSays() {
       console.log("Error occurred" + error);
     }
   });
+}
+function help() {
+  console.log();
+  ("To use liri, the user will need to initialize the app by typing 'node liri' in the command line followed by a specific parameter to choose what you want it to do.");
+  console.log("*****Console commands*****" + "\r\n");
+  console.log(
+    "'my-tweets' - Displays the last twenty tweets from Twitter and saves them to log.txt" +
+      "\r\n"
+  );
+  console.log(
+    "spotify-this-song '<song name>' - Displays song information about that specific song from Spotify and saves it to log.txt.  If no song is chosen, the program will default to the song The Sign by Ace of Base." +
+      "\r\n"
+  );
+  console.log(
+    "movie-this '<movie-title>' - Displays movie information about the specific movie from the Open Movie Database and saves it to log.txt." +
+      "\r\n"
+  );
+  console.log(
+    "do-what-it-says Reads file random.txt and will run the spotify command function automatically and displays the information.  The information will be saved to log.txt "
+  );
 }
